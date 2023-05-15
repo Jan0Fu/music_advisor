@@ -4,11 +4,15 @@ import java.util.Scanner;
 
 public class UserInterface {
 
+    private final String authPath;
     private final Scanner scan;
+    private final Authorization authorization;
     private boolean isAuthenticated;
 
-    public UserInterface() {
+    public UserInterface(String path) {
+        this.authPath = path;
         this.scan = new Scanner(System.in);
+        this.authorization = new Authorization();
         this.isAuthenticated = false;
     }
 
@@ -17,7 +21,7 @@ public class UserInterface {
         while (true) {
             String userInput = scan.nextLine();
             switch (userInput) {
-                case "auth" -> authentication();
+                case "auth" -> isAuthenticated = authorization.authorize(authPath);
                 case "new" -> newReleases();
                 case "featured" -> featured();
                 case "categories" -> categories();
@@ -26,12 +30,6 @@ public class UserInterface {
                 default -> System.out.println("wrong input");
             }
         }
-    }
-
-    private void authentication() {
-        System.out.println("https://accounts.spotify.com/authorize?client_id=d7792bd713af4b8a8f100cf307a7c8bd&redirect_uri=https://www.example.com&response_type=code");
-        isAuthenticated = true;
-        System.out.println("---SUCCESS---");
     }
 
     private void newReleases() {
