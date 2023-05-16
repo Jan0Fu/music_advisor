@@ -18,13 +18,13 @@ public class Authorization {
     private final String clientId = "d7792bd713af4b8a8f100cf307a7c8bd";
     private final String clientSecret = "ec5029c016124c9da150cfd06f995409";
     private String accessCode = "";
-    private String accessToken = "";
+    private static String accessToken = "";
 
-    public boolean authorize(String authPath) {
+    public boolean authorize(String authUri) {
 
         try {
             System.out.println("use this link to request the access code:\n" +
-                    authPath + "/authorize?client_id=" + clientId + "&redirect_uri=http://localhost:8080/&response_type=code\n" +
+                    authUri + "/authorize?client_id=" + clientId + "&redirect_uri=http://localhost:8080/&response_type=code\n" +
                     "waiting for code...");
 
             HttpServer server = HttpServer.create();
@@ -55,7 +55,7 @@ public class Authorization {
             server.stop(10);
             System.out.println("code received");
 
-            if (authRequest(authPath)) {
+            if (authRequest(authUri)) {
                 return true;
             }
 
@@ -92,5 +92,7 @@ public class Authorization {
         return false;
     }
 
-
+    public static String getToken() {
+        return accessToken;
+    }
 }

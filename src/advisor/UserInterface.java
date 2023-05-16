@@ -4,28 +4,43 @@ import java.util.Scanner;
 
 public class UserInterface {
 
-    private final String authPath;
     private final Scanner scan;
     private final Authorization authorization;
+    private final ApiRequest apiRequest;
+    private String authUri;
+    private String apiUri;
+    private int itemsPage;
     private boolean isAuthenticated;
 
-    public UserInterface(String path) {
-        this.authPath = path;
+    public UserInterface() {
+        this.authUri = "https://accounts.spotify.com";
+        this.apiUri = "https://api.spotify.com";
+        this.itemsPage = 5;
         this.scan = new Scanner(System.in);
         this.authorization = new Authorization();
+        this.apiRequest = new ApiRequest(apiUri);
         this.isAuthenticated = false;
     }
 
-    public void start() {
-
+    public void start(String[] args) {
+        for (int i = 0; i < args.length; i++) {
+            if (args[i].equals("-access")) {
+                authUri = args[i + 1];
+            } else if (args[i].equals("-resource")) {
+                apiUri = args[i + 1];
+            } else if (args[i].equals("-page")) {
+                itemsPage = Integer.parseInt(args[i + 1]);
+            }
+        }
         while (true) {
             String userInput = scan.nextLine();
-            switch (userInput) {
-                case "auth" -> isAuthenticated = authorization.authorize(authPath);
+            String[] inputs = userInput.split(" ");
+            switch (inputs[0]) {
+                case "auth" -> isAuthenticated = authorization.authorize(authUri);
                 case "new" -> newReleases();
                 case "featured" -> featured();
                 case "categories" -> categories();
-                case "playlists Mood" -> playlists();
+                case "playlists" -> playlists(inputs[1]);
                 case "exit" -> exit();
                 default -> System.out.println("wrong input");
             }
@@ -34,12 +49,8 @@ public class UserInterface {
 
     private void newReleases() {
         if (isAuthenticated) {
-            System.out.println("---NEW RELEASES---");
-            System.out.println(new StringBuilder()
-                    .append("Mountains [Sia, Diplo, Labrinth]\n")
-                    .append("Runaway [Lil Peep]\n")
-                    .append("The Greatest Show [Panic! At The Disco]\n")
-                    .append("All Out Life [Slipknot]"));
+            System.out.println(apiRequest.getNewReleases());
+
         } else {
             System.out.println("Please, provide access for application.");
         }
@@ -47,12 +58,7 @@ public class UserInterface {
 
     private void featured() {
         if (isAuthenticated) {
-            System.out.println("---FEATURED---");
-            System.out.println(new StringBuilder()
-                    .append("Mellow Morning\n")
-                    .append("Wake Up and Smell the Coffee\n")
-                    .append("Monday Motivation\n")
-                    .append("Songs to Sing in the Shower"));
+            System.out.println(apiRequest.getFeatured());
         } else {
             System.out.println("Please, provide access for application.");
         }
@@ -60,23 +66,15 @@ public class UserInterface {
 
     private void categories() {
         if (isAuthenticated) {
-            System.out.println("---CATEGORIES---");
-            System.out.println("Top Lists\n" +
-                    "Pop\n" +
-                    "Mood\n" +
-                    "Latin");
+            System.out.println(apiRequest.getCategories());
         } else {
             System.out.println("Please, provide access for application.");
         }
     }
 
-    private void playlists() {
+    private void playlists(String category) {
         if (isAuthenticated) {
-            System.out.println("---MOOD PLAYLISTS---");
-            System.out.println("Walk Like A Badass  \n" +
-                    "Rage Beats  \n" +
-                    "Arab Mood Booster  \n" +
-                    "Sunday Stroll");
+            System.out.println(apiRequest.getPlaylists(category));
         } else {
             System.out.println("Please, provide access for application.");
         }
