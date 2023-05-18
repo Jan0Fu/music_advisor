@@ -18,9 +18,10 @@ public class Authorization {
     private final String clientId = "d7792bd713af4b8a8f100cf307a7c8bd";
     private final String clientSecret = "ec5029c016124c9da150cfd06f995409";
     private String accessCode = "";
+    private String authUri = "https://accounts.spotify.com";
     private static String accessToken = "";
 
-    public boolean authorize(String authUri) {
+    public boolean authorize() {
 
         try {
             System.out.println("use this link to request the access code:\n" +
@@ -38,7 +39,6 @@ public class Authorization {
 
                             if (query != null && query.split("=")[0].equals("code")) {
                                 accessCode = code;
-                                System.out.println(accessCode);
                                 query = "Got the code. Return back to your program.";
                             } else {
                                 query = "Authorization code not found. Try again.";
@@ -79,7 +79,6 @@ public class Authorization {
                 HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
                 JsonObject jo = JsonParser.parseString(response.body()).getAsJsonObject();
                 accessToken = jo.get("access_token").getAsString();
-                System.out.println(response.body());
                 System.out.println("---SUCCESS---");
                 return true;
 
@@ -90,6 +89,10 @@ public class Authorization {
             System.out.println("Authorization code not found. Try again.");
         }
         return false;
+    }
+
+    public void setAuthUri(String authUri) {
+        this.authUri = authUri;
     }
 
     public static String getToken() {

@@ -16,10 +16,10 @@ import java.util.List;
 
 public class ApiRequest {
 
-    private final String apiUri;
+    private String apiUri;
 
-    public ApiRequest(String apiUri) {
-        this.apiUri = apiUri;
+    public ApiRequest(  ) {
+        this.apiUri = "https://api.spotify.com";
     }
 
     private String sendRequest(String url) {
@@ -46,7 +46,6 @@ public class ApiRequest {
             JsonObject error = jo.getAsJsonObject("error");
             System.out.println(error.get("message").getAsString());
         }
-        System.out.println(responseBody);
         return responseBody;
     }
 
@@ -95,8 +94,8 @@ public class ApiRequest {
             return categories;
         }
         JsonArray jsonArr = JsonParser.parseString(serverResponse).getAsJsonObject().get("categories").getAsJsonObject().get("items").getAsJsonArray();
-        for (JsonElement category: jsonArr) {
-            categories.add(category.getAsJsonObject().get("name").getAsString());
+        for (JsonElement item: jsonArr) {
+            categories.add(item.getAsJsonObject().get("name").getAsString());
         }
         return categories;
     }
@@ -134,5 +133,9 @@ public class ApiRequest {
             }
         }
         return "unknown";
+    }
+
+    public void setApiUri(String apiUri) {
+        this.apiUri = apiUri;
     }
 }
